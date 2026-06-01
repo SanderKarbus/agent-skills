@@ -1,70 +1,70 @@
-# AI Arendusassistendi Reeglite Faili Uurimus
+# Research on AI Development Assistant Rules and Quality Assurance
 
-## Eesmärk
+## Objective
 
-Käesoleva töö eesmärk on uurida, milliseid reeglite faile erinevad AI arendusassistendid toetavad ning millised tarkvaraarenduse praktikad aitavad tagada AI loodud koodi kvaliteedi, turvalisuse ja töökindluse.
+The purpose of this research is to investigate which instruction files are supported by modern AI development assistants and to identify software engineering practices that help ensure the quality, safety, and reliability of AI-generated code.
 
-Uurimistöö põhineb ametlikel dokumentatsioonidel ja tarkvaraarenduse parimatel praktikatel.
+The research is based on official documentation and widely accepted software engineering best practices.
 
 ---
 
-# 1. Millist reeglite faili AI tööriistad toetavad?
+# 1. Which Instruction Files Are Supported by AI Development Tools?
 
-Erinevad AI tööriistad kasutavad erinevaid juhisefaile projekti reeglite kirjeldamiseks.
+Different AI development tools support different formats for project-specific instructions.
 
 ## Claude Code
 
-Claude Code toetab faile:
+Claude Code supports:
 
 * `CLAUDE.md`
 * `.claude/CLAUDE.md`
 
-Neid kasutatakse püsivate projekti juhiste salvestamiseks, mida Claude kasutab kogu arendustöö vältel.
+These files are used to store persistent project instructions that Claude follows throughout development.
 
-Allikas:
+Source:
 https://docs.claude.com/en/docs/claude-code/memory
 
 ---
 
 ## GitHub Copilot
 
-GitHub Copilot toetab faile:
+GitHub Copilot supports:
 
 * `.github/copilot-instructions.md`
 * `.github/instructions/*.instructions.md`
 
-Need failid võimaldavad määrata projekti-spetsiifilisi juhiseid, mida Copilot arvestab koodi genereerimisel.
+These files allow developers to provide repository-specific instructions that Copilot uses when generating code.
 
-Allikas:
+Source:
 https://docs.github.com/en/copilot/how-tos/custom-instructions/adding-repository-custom-instructions-for-github-copilot
 
 ---
 
 ## AGENTS.md
 
-AGENTS.md on tööriistadeülene formaat, mida kasutatakse AI agentide käitumise kirjeldamiseks.
+AGENTS.md is a tool-agnostic instruction format designed for AI coding agents.
 
-Selle eeliseks on tööriistasõltumatus ja võimalus kasutada sama reeglistikku erinevate AI arendusassistentidega.
+Its primary advantage is that it can be reused across multiple AI tools rather than being tied to a specific vendor.
 
-Allikas:
+Source:
 https://agentsmd.io
 
 ---
 
-# 2. Kuidas AI peaks projekti enne muudatuste tegemist analüüsima?
+# 2. How Should an AI Analyze a Project Before Making Changes?
 
-AI ei tohiks alustada kohe koodi kirjutamisest.
+An AI assistant should never begin by immediately generating code.
 
-Enne muudatuste tegemist peab AI:
+Before making any modifications, it should:
 
-1. Uurima projekti struktuuri.
-2. Tuvastama kasutatavad tehnoloogiad.
-3. Lugema olemasolevat koodi.
-4. Mõistma projekti arhitektuuri.
-5. Otsima olemasolevaid sarnaseid lahendusi.
-6. Analüüsima olemasolevaid teste.
+1. Inspect the repository structure.
+2. Identify the technologies and frameworks being used.
+3. Read relevant existing code.
+4. Understand the project architecture.
+5. Search for similar existing implementations.
+6. Review the current test suite.
 
-Näiteks tuleks uurida järgmisi faile:
+Typical files that should be examined include:
 
 * package.json
 * requirements.txt
@@ -72,318 +72,343 @@ Näiteks tuleks uurida järgmisi faile:
 * go.mod
 * Cargo.toml
 * docker-compose.yml
-* CI konfiguratsioonid
+* CI configuration files
 
-Selline lähenemine vähendab vigade ja ebajärjekindla koodi tekkimise riski.
+This process reduces the risk of introducing inconsistent or incorrect solutions.
 
 ---
 
-# 3. Kuidas vältida katkise koodi jõudmist main harusse?
+# 3. How Can Broken Code Be Prevented from Reaching the Main Branch?
 
-Kaasaegses tarkvaraarenduses kasutatakse selleks mitut kaitsekihti.
+Modern software development uses multiple layers of protection.
 
-## Feature Branch
+## Feature Branches
 
-Kõik arendus toimub eraldi harus.
+All development work should occur in a dedicated branch.
 
-Näiteks:
+Example:
 
+```text
 feature/add-login
+```
 
-See hoiab pooleliolevad muudatused eemal põhiharust.
+This keeps incomplete or experimental work isolated from the main branch.
 
 ---
 
-## Pull Request
+## Pull Requests
 
-Enne muudatuste ühendamist luuakse Pull Request.
+Changes should be submitted through Pull Requests before being merged.
 
-See võimaldab:
+Pull Requests allow:
 
-* kontrollida muudatusi;
-* arutada lahendust;
-* teha koodi ülevaatust.
+* code review;
+* discussion of implementation details;
+* validation of the proposed solution.
 
 ---
 
 ## Branch Protection
 
-Branch Protection piirab tegevusi põhiharus.
+Branch protection rules help prevent unsafe changes from reaching production.
 
-Näiteks:
+Typical protections include:
 
-* keelab otsesed commitid main harusse;
-* nõuab ülevaatust enne merge'i;
-* nõuab edukat CI kontrolli.
+* blocking direct commits to main;
+* requiring code reviews;
+* requiring successful CI checks before merge.
 
-Allikas:
+Source:
 https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches
 
 ---
 
 ## Required Status Checks
 
-Merge lubatakse ainult siis, kui kõik kontrollid on edukalt läbitud.
+A Pull Request should only be mergeable when all required checks pass.
 
-Näiteks:
+Examples include:
 
-* testid;
+* automated tests;
 * linting;
-* build;
+* build validation;
 * type checking.
 
 ---
 
 ## CI Pipeline
 
-Continuous Integration süsteem käivitab automaatsed kontrollid iga muudatuse korral.
+Continuous Integration automatically validates changes whenever code is pushed or a Pull Request is opened.
 
-Levinud kontrollid:
+Common CI tasks include:
 
-* testid;
-* linting;
-* build;
-* turvakontrollid.
+* running tests;
+* running linting tools;
+* validating builds;
+* performing security checks.
 
-Allikas:
+Source:
 https://docs.github.com/en/actions
 
 ---
 
 ## Automated Tests
 
-Automaatsed testid kontrollivad, et olemasolev funktsionaalsus ei puruneks.
+Automated tests verify that new changes do not break existing functionality.
 
 ---
 
 ## Linting
 
-Linting leiab:
+Linting tools help detect:
 
-* süntaksivead;
-* stiilivead;
-* riskantsed konstruktsioonid.
+* syntax errors;
+* style violations;
+* potentially dangerous code patterns.
 
-Näited:
+Examples:
 
 * ESLint
-* Pylint
 * Ruff
+* Pylint
 
 ---
 
 ## Type Checking
 
-Tüübikontroll leiab vead enne programmi käivitamist.
+Type checking helps identify programming errors before runtime.
 
-Näiteks TypeScripti puhul:
+Example:
 
+```text
 tsc --noEmit
+```
 
 ---
 
 ## Code Review
 
-Koodi ülevaatus aitab avastada:
+Automated tools cannot detect every issue.
 
-* loogikavigu;
-* turvaprobleeme;
-* arhitektuurilisi probleeme.
+Human reviewers help identify:
 
-Automaatkontroll ei asenda inimülevaatust.
+* business logic mistakes;
+* security concerns;
+* architectural problems.
 
----
-
-# 4. Kuidas vältida regressioone?
-
-Regressioon tähendab olukorda, kus varem parandatud viga ilmub uuesti.
-
-Kõige tõhusam meetod regressioonide vältimiseks on regressioonitest.
-
-## Regressioonitesti põhimõte
-
-Bugi parandamisel tuleb:
-
-1. kirjutada test, mis vea taastoodab;
-2. veenduda, et test enne parandust ebaõnnestub;
-3. teha parandus;
-4. kontrollida, et test pärast parandust õnnestub.
-
-See tagab, et sama probleem ei naase tulevikus märkamatult.
-
-Paljud arendusmeeskonnad peavad bug fix'i lõpetamata tööks, kui regressioonitesti ei lisata.
+Code review remains a critical quality assurance step.
 
 ---
 
-# 5. Milliseid käske peab AI enne töö lõpetamist käivitama?
+# 4. How Can Regressions Be Prevented?
 
-Enne töö valmisks märkimist tuleb käivitada kõik projekti kvaliteedikontrollid.
+A regression occurs when a previously fixed bug reappears.
 
-## Testid
+The most effective protection against regressions is a regression test.
 
-Näited:
+## Regression Testing Process
 
+When fixing a bug:
+
+1. Create a test that reproduces the issue.
+2. Verify that the test fails before the fix.
+3. Implement the fix.
+4. Verify that the test passes after the fix.
+
+This ensures that future changes cannot accidentally reintroduce the same problem without detection.
+
+Many development teams consider a bug fix incomplete if a regression test is not added.
+
+---
+
+# 5. Which Commands Should an AI Run Before Completing a Task?
+
+Before marking work as complete, an AI assistant should execute all applicable quality checks.
+
+## Tests
+
+Examples:
+
+```text
 npm test
+```
 
-või
+or
 
+```text
 pytest
+```
 
 ---
 
-## Lint
+## Linting
 
-Näited:
+Examples:
 
+```text
 npm run lint
+```
 
-või
+or
 
+```text
 ruff check .
+```
 
 ---
 
 ## Type Checking
 
-Näide:
+Example:
 
+```text
 tsc --noEmit
+```
 
 ---
 
-## Build
+## Build Validation
 
-Näide:
+Example:
 
+```text
 npm run build
+```
 
 ---
 
-## Formatter
+## Formatting Validation
 
-Näide:
+Example:
 
+```text
 prettier --check .
+```
 
 ---
 
-## Security ja Dependency Check
+## Security and Dependency Checks
 
-Näited:
+Examples:
 
+```text
 npm audit
+```
 
+```text
 pip-audit
+```
 
-Dependabot
+Other common tools include:
 
-OWASP Dependency Check
+* Dependabot
+* OWASP Dependency Check
 
-Need aitavad leida teadaolevaid turvanõrkuseid sõltuvustes.
-
----
-
-# 6. Kuidas piirata AI muudatuste ulatust?
-
-AI üks peamisi riske on liiga suurte muudatuste tegemine.
-
-Seetõttu tuleks järgida järgmisi põhimõtteid.
-
-## Muuda ainult seotud faile
-
-Kui probleem puudutab autentimist, ei tohiks AI muuta maksete või teavituste mooduleid.
+These checks help identify known vulnerabilities in project dependencies.
 
 ---
 
-## Väikesed muudatused
+# 6. How Should the Scope of AI Changes Be Limited?
 
-Väikseid muudatusi on:
+One of the major risks of AI-assisted development is making unnecessarily large modifications.
 
-* lihtsam üle vaadata;
-* lihtsam testida;
-* lihtsam tagasi võtta.
+The following principles help control scope.
 
----
+## Modify Only Relevant Files
 
-## Väldi põhjendamatut refaktoreerimist
-
-Kui ülesanne on parandada üks viga, ei tohiks AI samaaegselt ümber kirjutada kogu arhitektuuri.
+If the issue concerns authentication, the AI should not modify unrelated payment or notification modules.
 
 ---
 
-## Säilita olemasolev arhitektuur
+## Prefer Small Changes
 
-AI peaks eelistama olemasolevate mustrite järgimist uute lahenduste leiutamise asemel.
+Smaller changes are:
 
----
-
-# 7. Millal peab AI kasutajalt kinnitust küsima?
-
-AI ei tohiks teha kõrge mõjuga muudatusi ilma kasutaja nõusolekuta.
-
-Kinnitust tuleks küsida järgmiste tegevuste korral:
-
-## Andmebaasi skeemi muutmine
-
-Näiteks:
-
-* tabelite muutmine;
-* veergude kustutamine;
-* migratsioonid.
+* easier to review;
+* easier to test;
+* easier to revert.
 
 ---
 
-## Uute dependency’de lisamine
+## Avoid Unnecessary Refactoring
 
-Iga uus sõltuvus suurendab:
-
-* hoolduskoormust;
-* turvariski;
-* projekti keerukust.
+If the task is to fix a bug, the AI should not simultaneously redesign the architecture or refactor unrelated systems.
 
 ---
 
-## Failide kustutamine
+## Follow Existing Architecture
 
-Oluliste failide kustutamine peab olema teadlik otsus.
-
----
-
-## Avaliku API muutmine
-
-API muudatused võivad lõhkuda olemasolevad kliendid.
+The AI should extend existing patterns whenever possible rather than introducing entirely new approaches.
 
 ---
 
-## Turvalisusega seotud muudatused
+# 7. When Should an AI Request User Approval?
 
-Näiteks:
+An AI assistant should request approval before making high-impact changes.
 
-* autentimine;
-* autoriseerimine;
-* tokenid;
-* sessioonid;
-* õiguste kontroll.
+## Database Schema Changes
 
----
+Examples include:
 
-## Suured refaktoreerimised
+* modifying tables;
+* deleting columns;
+* creating migrations.
 
-Kui muudatus puudutab suurt osa projektist või paljusid faile, peab AI enne jätkamist kinnitust küsima.
+These changes can affect existing data and application behavior.
 
 ---
 
-# Kokkuvõte
+## Adding Dependencies
 
-Uurimistöö põhjal saab teha kolm peamist järeldust:
+Every new dependency introduces:
 
-1. AI peab enne koodi genereerimist põhjalikult analüüsima olemasolevat projekti ja selle arhitektuuri.
-2. Katkise koodi jõudmist põhiharusse aitab vältida mitmekihiline kvaliteedikontroll: feature branch, pull request, branch protection, CI, automaattestid ja code review.
-3. AI loodud muudatused peavad olema võimalikult väikesed, testitud ning bug fix’ide korral peab olema lisatud regressioonitest.
+* maintenance overhead;
+* security risks;
+* additional project complexity.
 
 ---
 
-# Kasutatud allikad
+## Deleting Files
+
+Important files should never be removed without explicit approval.
+
+---
+
+## Public API Changes
+
+Changes to public APIs may break existing clients and integrations.
+
+---
+
+## Security-Related Changes
+
+Approval should be requested before modifying:
+
+* authentication;
+* authorization;
+* tokens;
+* sessions;
+* access control mechanisms.
+
+---
+
+## Large Refactoring Efforts
+
+Changes affecting many files, modules, or architectural components should always be approved before implementation.
+
+---
+
+# Conclusion
+
+This research leads to three key conclusions:
+
+1. AI should thoroughly analyze the existing project and architecture before generating code.
+2. Broken code is best prevented from reaching the main branch through multiple quality gates, including feature branches, pull requests, branch protection, CI pipelines, automated testing, and code review.
+3. AI-generated changes should remain small, focused, and thoroughly validated, while bug fixes should always include regression tests whenever possible.
+
+---
+
+# References
 
 1. Anthropic Claude Code Documentation
    https://docs.claude.com/en/docs/claude-code/memory
