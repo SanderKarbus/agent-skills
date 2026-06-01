@@ -83,3 +83,7 @@ This system combines:
 - changelog tracking
 
 to ensure safe and predictable AI-assisted development.
+
+# CI Validation Proof
+
+<img width="1840" height="804" alt="image" src="https://github.com/user-attachments/assets/32517933-69a9-413d-8f94-1276d730276e" />
